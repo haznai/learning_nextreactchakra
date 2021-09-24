@@ -3,7 +3,10 @@ import ReactDOM from "react-dom";
 import "./index.css";
 
 // function component
-function Square(props: { value: null | string; onClick: () => void }) {
+function Square(props: {
+  value: null | string;
+  onClick: () => void;
+}): JSX.Element {
   return (
     <button className="square" onClick={props.onClick}>
       {props.value}
@@ -13,7 +16,7 @@ function Square(props: { value: null | string; onClick: () => void }) {
 
 class Board extends React.Component<
   {}, // empty props
-  { squares: (string | null)[]; xIsNext: boolean }
+  { squares: ("X" | "O" | null)[]; xIsNext: boolean }
 > {
   // general state of the board
   // gets passed down to individual squares
@@ -22,12 +25,15 @@ class Board extends React.Component<
   // method that gets passed down to the squares
   // gets called by the square when clicked
   handleclick(i: number) {
-    // return early if square has been set before
-    if (this.state.squares[i] != null) {
+    // slice to create a copy of the state
+    // you want to avoid modifying he state directly
+    const squares = this.state.squares.slice();
+
+    // return early if square has been set or if there is a winner
+    if (calculateWinner(squares) || squares[i] != null) {
       return;
     }
 
-    const squares = this.state.squares.slice();
     this.state.xIsNext ? (squares[i] = "X") : (squares[i] = "O");
     // update the state and toggle xIsNext
     this.setState({ squares: squares, xIsNext: !this.state.xIsNext });
@@ -43,7 +49,10 @@ class Board extends React.Component<
   }
 
   render() {
-    const status = `Next player: ${this.state.xIsNext ? "X" : "0"}`;
+    const winner = calculateWinner(this.state.squares);
+    let status = winner
+      ? `Winner: ${winner}`
+      : `Next player: ${this.state.xIsNext ? "X" : "0"}`;
 
     return (
       <div>
@@ -76,12 +85,37 @@ class Game extends React.Component {
           <Board />
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
+          <div>{}</div>
           <ol>{/* TODO */}</ol>
         </div>
       </div>
     );
   }
+}
+
+function calculateWinner(squares: ("X" | "O" | null)[]): "X" | "O" | null {
+  // lines in that result in a winner of tic tac toe
+  // 3x3 array
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (const [a, b, c] of lines) {
+    if (
+      squares[a] != null &&
+      squares[a] === squares[b] &&
+      squares[a] === squares[c]
+    ) {
+      return squares[a];
+    }
+  }
+  return null;
 }
 
 // =======================================

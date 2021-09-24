@@ -1,5 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Courier+Prime&family=Fraunces&display=swap");
+
 body {
-  font: 14px "Century Gothic", Futura, sans-serif;
+  font: 14px "Fraunces", Futura, sans-serif;
   margin: 20px;
 }
 
@@ -15,6 +17,8 @@ ul {
 }
 
 .status {
+  font-family: "Fraunces", Futura, sans-serif;
+  font-size: large;
   margin-bottom: 10px;
 }
 
